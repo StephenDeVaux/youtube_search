@@ -3,7 +3,9 @@
     <div class="search_bar">
       <div class="input-group">
         <div class="input-group-prepend">
-          <span class="input-group-text" id="basic-addon1">Search</span>
+          <span class="input-group-text" id="basic-addon1">
+            <img src="~/assets/search_icon.svg" alt="" />
+          </span>
         </div>
         <input
           type="text"
@@ -16,6 +18,7 @@
         />
       </div>
     </div>
+    <h3 class="info_text">Why not browse this nice channel?</h3>
     <div class="grid_container">
       <div v-for="video in videos" :key="video.id.videoId">
         <div class="card" style="width: 320px">
@@ -25,7 +28,7 @@
             alt="Card image cap"
           />
           <div class="card-body">
-            <h5 class="card-title">{{ video.snippet.title }}</h5>
+            <h5 class="card-title">{{ titleFormat(video.snippet.title) }}</h5>
             <p class="card-text">{{ video.snippet.channelTitle }}</p>
             <p class="card-text">
               Uploaded: {{ convertTime(video.snippet.publishedAt) }}
@@ -340,49 +343,16 @@ export default {
         }
       };
     },
-    mounted() {
-      this.scroll();
-    },
+    titleFormat(title) {
+        let maxLength = 50
+        if(title.length  > maxLength){
+            return title.slice(0,maxLength).concat("...")
+        }
+        return title;
+    }
+  },
+  mounted() {
+    this.scroll();
   },
 };
 </script>
-
-<style>
-.grid_container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  justify-items: center;
-
-}
-.thumbnail {
-  height: 180px;
-}
-
-.card {
-  margin-top: 30px;
-}
-
-.search_bar {
-  margin: 10px auto 0 auto;
-  max-width: 800px;
-}
-
-
-@media only screen and (max-width: 1400px) {
-  .grid_container {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-}
-
-@media only screen and (max-width: 1060px) {
-  .grid_container {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media only screen and (max-width: 700px) {
-  .grid_container {
-    grid-template-columns: 1fr;
-  }
-}
-</style>

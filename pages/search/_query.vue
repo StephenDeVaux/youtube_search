@@ -1,5 +1,25 @@
 <template>
   <div>
+    <div class="search_bar">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1">
+            <img src="~/assets/search_icon.svg" alt="" />
+          </span>
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="...."
+          aria-label="Username"
+          aria-describedby="basic-addon1"
+          v-model="newSearch"
+          @keyup.enter="searchYouTube"
+        />
+      </div>
+    </div>
+
+    <h3 class="info_text">Your serach results for "{{ query }}"</h3>
     <div class="grid_container">
       <div v-for="video in videos" :key="video.id.videoId">
         <div class="card" style="width: 320px">
@@ -9,7 +29,7 @@
             alt="Card image cap"
           />
           <div class="card-body">
-            <h5 class="card-title">{{ video.snippet.title }}</h5>
+            <h5 class="card-title">{{ titleFormat(video.snippet.title) }}</h5>
             <p class="card-text">{{ video.snippet.channelTitle }}</p>
             <p class="card-text">{{ video.statistics.viewCount }} views</p>
             <p class="card-text">
@@ -32,6 +52,7 @@ export default {
       videos: [],
       nextPageToken: "",
       query: "",
+      newSearch: "",
     };
   },
   async asyncData({ route, redirect, env }) {
@@ -325,6 +346,12 @@ export default {
     return;
   },
   methods: {
+    searchYouTube() {
+      this.nextPageToken = "";
+      this.query = this.newSearch;
+      this.videos = [];
+      this.$fetch();
+    },
     scroll() {
       window.onscroll = () => {
         let bottomOfWindow =
@@ -338,42 +365,16 @@ export default {
     convertTime(time) {
       return moment(time).format("YYYY-MM-DD");
     },
+    titleFormat(title) {
+      let maxLength = 50;
+      if (title.length > maxLength) {
+        return title.slice(0, maxLength).concat("...");
+      }
+      return title;
+    },
   },
   mounted() {
     this.scroll();
   },
 };
 </script>
-
-<style>
-.grid_container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  justify-items: center;
-}
-.thumbnail {
-  height: 180px;
-}
-
-.card {
-  margin-top: 30px;
-}
-
-@media only screen and (max-width: 1400px) {
-  .grid_container {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-}
-
-@media only screen and (max-width: 1060px) {
-  .grid_container {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media only screen and (max-width: 700px) {
-  .grid_container {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
