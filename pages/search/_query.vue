@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="grid_container">
-      <div v-for="video in videos" :key="video.etag">
+      <div v-for="video in videos" :key="video.id.videoId">
         <div class="card" style="width: 320px">
           <img
             class="card-img-top thumbnail"
@@ -30,42 +30,31 @@ export default {
     return {
       videos: [],
       nextPageToken: "",
+      query: "",
     };
   },
   async asyncData({ route, redirect, env }) {
-    try {
-      if (!route.query.query) {
-        redirect("/");
-      }
-      let url = `https://youtube.googleapis.com/youtube/v3/search?part=snippet`;
-      const { data } = await axios.get(url, {
-        params: {
-          q: route.query.query,
-          maxResults: 12,
-          key: env.apikey,
-        },
-      });
-
-      return { videos: data.items, nextPageToken: data.nextPageToken };
-      return;
-    } catch {
-      error({ message: "Information not found" });
+    if (!route.query.query) {
+      redirect("/");
     }
+    return { query: route.query.query, apikey: env.apikey };
   },
   async fetch() {
-    console.log("fetching?");
-    // let url = `https://youtube.googleapis.com/youtube/v3/search?part=snippet`;
-    // const { data } = await axios.get(url, {
-    //   params: {
-    //     q: route.query.query,
-    //     nextPageToken: this.nextPageToken,
-    //     maxResults: 12,
-    //     key: env.apikey,
-    //   },
-    // });
-    // console.log(data);
-    // return;
-    // this.videos.push(...data.items)
+    console.log("fetching!");
+
+    let url = `https://youtube.googleapis.com/youtube/v3/search?part=snippet`;
+    console.log(this.apikey);
+    const { data } = await axios.get(url, {
+      params: {
+        q: this.query,
+        pageToken: this.nextPageToken,
+        maxResults: 12,
+        key: this.apikey,
+      },
+    });
+    this.nextPageToken = data.nextPageToken
+    this.videos.push(...data.items);
+    return
   },
   methods: {
     scroll() {
