@@ -60,7 +60,6 @@ export default {
     console.log(this.apikey);
     const { data } = await axios.get(url, {
       params: {
-        // q: this.query,
         channelId: "UCsXVk37bltHxD1rDPwtNM8Q",
         pageToken: this.nextPageToken,
         maxResults: 12,
@@ -74,31 +73,28 @@ export default {
   },
   methods: {
     searchYouTube() {
-      console.log("this query is " + this.query);
       this.$router.push(`/search?query=${this.query}`);
     },
     convertTime(time) {
       return moment(time).format("YYYY-MM-DD");
+    },
+    titleFormat(title) {
+      let maxLength = 50;
+      if (title.length > maxLength) {
+        return title.slice(0, maxLength).concat("...");
+      }
+      return title;
     },
     scroll() {
       window.onscroll = () => {
         let bottomOfWindow =
           document.documentElement.scrollTop + window.innerHeight ===
           document.documentElement.offsetHeight;
-        console.log("Scrol;?");
         if (bottomOfWindow) {
-          console.log("Bottom of page gonna fetch now");
           this.$fetch();
         }
       };
     },
-    titleFormat(title) {
-        let maxLength = 50
-        if(title.length  > maxLength){
-            return title.slice(0,maxLength).concat("...")
-        }
-        return title;
-    }
   },
   mounted() {
     this.scroll();

@@ -59,8 +59,6 @@ export default {
     if (!route.query.query) {
       redirect("/");
     }
-    console.log("Query paramater is " + route.query.query);
-    console.log("The api key is " + env.apikey);
     return { query: route.query.query, apikey: env.apikey };
   },
   async fetch() {
@@ -101,16 +99,6 @@ export default {
       this.videos = [];
       this.$fetch();
     },
-    scroll() {
-      window.onscroll = () => {
-        let bottomOfWindow =
-          document.documentElement.scrollTop + window.innerHeight ===
-          document.documentElement.offsetHeight;
-        if (bottomOfWindow) {
-          this.$fetch();
-        }
-      };
-    },
     convertTime(time) {
       return moment(time).format("YYYY-MM-DD");
     },
@@ -120,6 +108,16 @@ export default {
         return title.slice(0, maxLength).concat("...");
       }
       return title;
+    },
+    scroll() {
+      window.onscroll = () => {
+        let bottomOfWindow =
+          document.documentElement.scrollTop + window.innerHeight ===
+          document.documentElement.offsetHeight;
+        if (bottomOfWindow) {
+          this.$fetch();
+        }
+      };
     },
   },
   mounted() {
